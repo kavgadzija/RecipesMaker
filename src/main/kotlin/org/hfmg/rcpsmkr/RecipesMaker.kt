@@ -2,7 +2,7 @@ package org.hfmg.rcpsmkr
 
 data class Ingrediente (
     val id: Int,
-    val nombre: String,
+    var nombre: String,
 )
 
 data class IngredienteReceta (
@@ -119,27 +119,76 @@ class RecipesMaker {
             val opcion = readLine().toString()
 
             when (opcion) {
-                "C", "c" -> CrearIngrediente()
-                "M", "m" -> ModificarIngrediente()
-                "E", "e" -> EliminarIngrediente()
+                "C", "c" -> crearIngrediente()
+                "M", "m" -> modificarIngrediente()
+                "E", "e" -> eliminarIngrediente()
                 "S", "s" -> salir = true
                 else -> mostrarMensaje("Las opciones válidas son C, M, E, o S ... ")
             }
         }
     }
 
-    private fun CrearIngrediente() {
-        // por implementar
+    fun obtenerKeyMayor(keys: MutableSet<Int>): Int {
+        var mayor = 0
+        if (!keys.isEmpty()) {
+            for (key in keys) {
+                if (key > mayor) {
+                    mayor = key
+                }
+            }
+        }
+        return mayor
     }
 
-    private fun ModificarIngrediente() {
-        // por implementar
+    private fun crearIngrediente() {
+        println("------------------------------------------------------")
+        print("Ingresar el nombre del nuevo ingrediente: ")
+        val nombre = readLine().toString()
+        if (nombre != "") {
+            val key = obtenerKeyMayor(ingredientes.keys)
+            ingredientes[key+1] = Ingrediente(key+1, nombre)
+            mostrarMensaje("Se creo el nuevo ingrediente ... ")
+        } else {
+            mostrarMensaje("No ingreso ningun nombre ... ")
+        }
     }
 
-    private fun EliminarIngrediente() {
-        // por implementar
+    private fun modificarIngrediente() {3
+        println("------------------------------------------------------")
+        print("Ingresar el codigo del ingrediente a modificar: ")
+        val codigo = readLine().toString()
+        try {
+            val ingrediente = ingredientes[codigo.toInt()]
+            print("Cambiar [${ingrediente!!.nombre}] por: ")
+            val nombre = readLine().toString()
+            if (nombre != "") {
+                ingrediente?.nombre = nombre
+                ingredientes[codigo.toInt()] = ingrediente
+                mostrarMensaje("Se modifico el ingrediente ... ")
+            } else {
+                mostrarMensaje("No ingreso ningun nombre ... ")
+            }
+        } catch (exception: Exception) {
+            mostrarMensaje("Debe seleccionar un codigo de ingrediente valido ... ")
+        }
     }
 
+    private fun eliminarIngrediente() {
+        println("------------------------------------------------------")
+        print("Ingresar el codigo del ingrediente ha eliminar: ")
+        val codigo = readLine().toString()
+        try {
+            val key = codigo.toInt()
+            val ingrediente = ingredientes[key]
+            if (ingredientes.remove(key, ingrediente!!)) {
+                mostrarMensaje("Se elimino el ingrediente ... ")
+            } else {
+                mostrarMensaje("No se pudo elimnar el ingrediente ... ")
+            }
+        } catch (exception: Exception) {
+            mostrarMensaje("Debe ingresar un codigo de ingrediente valido ... ")
+        }
+    }
 
     fun crearReceta() {
         val receta = Receta("", mutableMapOf(), mutableListOf())
