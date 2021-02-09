@@ -21,6 +21,16 @@ class RecipesMaker {
     lateinit var recetas: MutableMap<Int, Receta>
     var ultIDRec: Int = 0
 
+    fun ejecutar() {
+        inicializar()
+        mostrarMenuPrincipal()
+    }
+
+    fun inicializar() {
+        inicializarIngredientes()
+        inicializarRecetas()
+    }
+
     fun inicializarIngredientes() {
         ingredientes = mutableMapOf<Int, Ingrediente>()
         ingredientes[1] = Ingrediente(1, "Agua")
@@ -35,21 +45,6 @@ class RecipesMaker {
 
     fun inicializarRecetas() {
         recetas = mutableMapOf<Int, Receta>()
-    }
-
-    fun ejecutar() {
-        inicializar()
-        mostrarMenuPrincipal()
-    }
-
-    fun inicializar() {
-        inicializarIngredientes()
-        inicializarRecetas()
-    }
-
-    fun mostrarMensaje(mensaje: String) {
-        print(mensaje)
-        val toString = readLine().toString()
     }
 
     fun listarIngredientes() {
@@ -77,6 +72,11 @@ class RecipesMaker {
         }
     }
 
+    fun mostrarMensaje(mensaje: String) {
+        print(mensaje)
+        val toString = readLine().toString()
+    }
+
     fun mostrarRecetario() {
         var salir = false
         while (!salir) {
@@ -84,9 +84,9 @@ class RecipesMaker {
             println("RECETARIO:")
             listarRecetas()
             println("------------------------------------------------------")
-            print("Elegir una receta [?] o salir con [Cero]: ")
+            print("Elegir una codigo de receta [?] o [S] para retornar: ")
             val opcion = readLine().toString()
-            if (opcion == "0") {
+            if (opcion == "S" || opcion == "s") {
                 salir = true
             } else {
                 if (opcion != "") {
@@ -107,6 +107,39 @@ class RecipesMaker {
             }
         }
     }
+
+    fun mostrarIngredientes() {
+        var salir = false
+        while (!salir) {
+            println("\n------------------------------------------------------")
+            println("INGREDIENTES:")
+            listarIngredientes()
+            println("------------------------------------------------------")
+            print("Elegir operacion [C]rear, [M]odificar, [E]liminar o [S]alir: ")
+            val opcion = readLine().toString()
+
+            when (opcion) {
+                "C", "c" -> CrearIngrediente()
+                "M", "m" -> ModificarIngrediente()
+                "E", "e" -> EliminarIngrediente()
+                "S", "s" -> salir = true
+                else -> mostrarMensaje("Las opciones válidas son C, M, E, o S ... ")
+            }
+        }
+    }
+
+    private fun CrearIngrediente() {
+        // por implementar
+    }
+
+    private fun ModificarIngrediente() {
+        // por implementar
+    }
+
+    private fun EliminarIngrediente() {
+        // por implementar
+    }
+
 
     fun crearReceta() {
         val receta = Receta("", mutableMapOf(), mutableListOf())
@@ -132,9 +165,7 @@ class RecipesMaker {
                 "3" -> ingresarPreparacion(receta)
                 "4" -> verReceta(receta)
                 "0" -> salir = guardarReceta(receta)
-                else -> {
-                    mostrarMensaje("Las opciones válidas son 1, 2, 3, 4 o Cero ... ")
-                }
+                else -> mostrarMensaje("Las opciones válidas son 1, 2, 3, 4 o Cero ... ")
             }
         }
 
@@ -177,23 +208,34 @@ class RecipesMaker {
             println("INGREDIENTES DISPONIBLES:")
             listarIngredientes()
             println("------------------------------------------------------")
-            print("Elegir un ingrediente [?] o salir con [Cero]: ")
+            print("Elegir un codigo de ingrediente [?] o salir con [S]: ")
             val opcion = readLine().toString()
-            if (opcion == "0") {
+            if (opcion == "S" || opcion == "s") {
                 salir = true
             } else {
-                val ingrediente = ingredientes[opcion.toInt()]
-                if (ingrediente != null) {
-                    print("Indicar la cantidad de [${ingrediente.nombre}]: ")
-                    val cantidad = readLine().toString()
-                    if (cantidad.isNotEmpty()) {
-                        val ingredienteReceta = IngredienteReceta(ingrediente, cantidad)
-                        receta.ingredientes[ingrediente.id] = ingredienteReceta
-                    } else {
-                        mostrarMensaje("Debe indicar la cantidad del ingrediente ... ")
+                if (opcion != "") {
+                    try {
+                        val ingrediente = ingredientes[opcion.toInt()]
+                        if (ingrediente != null) {
+                            var cantidad = ""
+                            do {
+                                print("Indicar la cantidad de [${ingrediente.nombre}]: ")
+                                cantidad = readLine().toString()
+                                if (cantidad.isNotEmpty()) {
+                                    val ingredienteReceta = IngredienteReceta(ingrediente, cantidad)
+                                    receta.ingredientes[ingrediente.id] = ingredienteReceta
+                                } else {
+                                    mostrarMensaje("Debe indicar una cantidad de [${ingrediente.nombre}] valida ... ")
+                                }
+                            } while (cantidad == "")
+                        } else {
+                            mostrarMensaje("Debe seleccionar un codigo de ingrediente valido ... ")
+                        }
+                    } catch (exception: Exception) {
+                        mostrarMensaje("Debe seleccionar un codigo de ingrediente valido ... ")
                     }
                 } else {
-                    mostrarMensaje("Debe seleccionar codigo de receta valido ... ")
+                    mostrarMensaje("Debe seleccionar un codigo de ingrediente valido ... ")
                 }
             }
         }
@@ -245,7 +287,7 @@ class RecipesMaker {
         var salir = false
         var guardada = false
         while (!salir) {
-            print("Guarda la receta (Si={S/s}  o  No={N/n}: ")
+            print("Usted guarda la receta (Si={S/s}  o  No={N/n}: ")
             val opcion = readLine().toString()
             when (opcion) {
                 "N","n" -> salir = true
@@ -268,14 +310,15 @@ class RecipesMaker {
 
     fun mostrarMenuPrincipal() {
         var opcion = ""
-        while (opcion != "0") {
+        while (opcion != "S" && opcion != "s") {
             println(
                 """
                     ------------------------------------------------------
                     MENU PRINCIPAL
                     [1] - Hacer una receta
                     [2] - Ver mis recetas
-                    [0] - Salir
+                    [3] - Ver mis ingredientes
+                    [S] - Salir
                     ------------------------------------------------------
                 """.trimIndent()
             )
@@ -284,9 +327,10 @@ class RecipesMaker {
             when (opcion) {
                 "1" -> crearReceta()
                 "2" -> mostrarRecetario()
-                "0" -> println("Opcion salir")
+                "3" -> mostrarIngredientes()
+                "S", "s" -> mostrarMensaje("*** Hasta pronto *** ... ")
                 else -> {
-                    mostrarMensaje("Las opciones válidas son 1, 2 o Cero ... ")
+                    mostrarMensaje("Las opciones válidas son 1, 2, 3 o S ... ")
                 }
             }
         }
