@@ -17,21 +17,21 @@ data class Receta(
 )
 
 class RecipesMaker {
-    lateinit var ingredientes: MutableMap<Int, Ingrediente>
-    lateinit var recetas: MutableMap<Int, Receta>
-    var ultIDRec: Int = 0
+    private lateinit var ingredientes: MutableMap<Int, Ingrediente>
+    private lateinit var recetas: MutableMap<Int, Receta>
+    private var ultIDRec: Int = 0
 
     fun ejecutar() {
         inicializar()
         mostrarMenuPrincipal()
     }
 
-    fun inicializar() {
+    private fun inicializar() {
         inicializarIngredientes()
         inicializarRecetas()
     }
 
-    fun inicializarIngredientes() {
+    private fun inicializarIngredientes() {
         ingredientes = mutableMapOf<Int, Ingrediente>()
         ingredientes[1] = Ingrediente(1, "Agua")
         ingredientes[2] = Ingrediente(2, "Leche")
@@ -43,41 +43,41 @@ class RecipesMaker {
         ingredientes[8] = Ingrediente(8, "Aceite")
     }
 
-    fun inicializarRecetas() {
+    private fun inicializarRecetas() {
         recetas = mutableMapOf<Int, Receta>()
     }
 
-    fun listarIngredientes() {
+    private fun listarIngredientes() {
         for ((id, ingrediente) in ingredientes) {
             println("[${id}] - ${ingrediente.nombre}")
         }
     }
 
-    fun listarIngredientesReceta(receta: Receta)  {
+    private fun listarIngredientesReceta(receta: Receta)  {
         var orden = 0
         for ((id, ingrec) in receta.ingredientes) {
             println("${++orden}. ${ingrec.ingrediente.nombre} (${ingrec.cantidad})")
         }
     }
 
-    fun listarPasosReceta(receta: Receta) {
+    private fun listarPasosReceta(receta: Receta) {
         for (paso in receta.preparacion) {
             println("- ${paso}.")
         }
     }
 
-    fun listarRecetas() {
+    private fun listarRecetas() {
         for ((id, receta) in recetas) {
             println("[${id}] - ${receta.nombre}")
         }
     }
 
-    fun mostrarMensaje(mensaje: String) {
+    private fun mostrarMensaje(mensaje: String) {
         print(mensaje)
         val toString = readLine().toString()
     }
 
-    fun mostrarRecetario() {
+    private fun mostrarRecetario() {
         var salir = false
         while (!salir) {
             println("\n------------------------------------------------------")
@@ -108,7 +108,7 @@ class RecipesMaker {
         }
     }
 
-    fun mostrarIngredientes() {
+    private fun mostrarIngredientes() {
         var salir = false
         while (!salir) {
             println("\n------------------------------------------------------")
@@ -128,7 +128,7 @@ class RecipesMaker {
         }
     }
 
-    fun obtenerKeyMayor(keys: MutableSet<Int>): Int {
+    private fun obtenerKeyMayor(keys: MutableSet<Int>): Int {
         var mayor = 0
         if (!keys.isEmpty()) {
             for (key in keys) {
@@ -190,7 +190,7 @@ class RecipesMaker {
         }
     }
 
-    fun crearReceta() {
+    private fun crearReceta() {
         val receta = Receta("", mutableMapOf(), mutableListOf())
         var salir = false
         while (!salir) {
@@ -220,7 +220,7 @@ class RecipesMaker {
 
     }
 
-    fun buscarReceta(nombre: String): Boolean {
+    private fun buscarReceta(nombre: String): Boolean {
         var encontrada = false
         for ((id, receta) in recetas) {
             encontrada = receta.nombre == nombre
@@ -229,7 +229,7 @@ class RecipesMaker {
         return encontrada
     }
 
-    fun ingresarNombre(receta: Receta): Receta {
+    private fun ingresarNombre(receta: Receta): Receta {
         print("Ingrese el nombre de la receta: ")
         val nombre = readLine().toString()
         if (nombre.isEmpty()) {
@@ -247,7 +247,7 @@ class RecipesMaker {
         }
     }
 
-    fun ingresarIngredientes(receta: Receta): Receta {
+    private fun ingresarIngredientes(receta: Receta): Receta {
         var salir = false
         while (!salir) {
             println("\n------------------------------------------------------")
@@ -291,7 +291,7 @@ class RecipesMaker {
         return receta
     }
 
-    fun ingresarPreparacion(receta: Receta): Receta {
+    private fun ingresarPreparacion(receta: Receta): Receta {
         var salir = false
         while (!salir) {
             println("\n------------------------------------------------------")
@@ -313,7 +313,7 @@ class RecipesMaker {
         return receta
     }
 
-    fun verReceta(receta: Receta) {
+    private fun verReceta(receta: Receta) {
         println("..................................................................................")
         println("RECETA:")
         println('"' + receta.nombre + '"')
@@ -325,7 +325,7 @@ class RecipesMaker {
         mostrarMensaje("Precione cualquier tecla para retornar ... ")
     }
 
-    fun recetaValida(receta: Receta): Boolean {
+    private fun recetaValida(receta: Receta): Boolean {
         val nombreOk = !receta.nombre.isEmpty()
         val ingredientesOk = receta.ingredientes.isNotEmpty()
         val preparacionOk = !receta.preparacion.isNullOrEmpty()
@@ -357,7 +357,7 @@ class RecipesMaker {
         return guardada
     }
 
-    fun mostrarMenuPrincipal() {
+    private fun mostrarMenuPrincipal() {
         var opcion = ""
         while (opcion != "S" && opcion != "s") {
             println(
